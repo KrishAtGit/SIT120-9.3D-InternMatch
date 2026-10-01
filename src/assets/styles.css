@@ -1,0 +1,1694 @@
+/* InternMatch : SIT120 Task 9.3D (Vue 3 + Vite)
+   The Task 6.3D stylesheet, reused and extended for the Vue components.
+   It is imported once in main.js and shared by every component.
+
+     PART 1 : SHARED       used by every view (header, footer, buttons, tables)
+     PART 2 : HOME         HomeView.vue
+     PART 3 : DASHBOARD    DashboardView.vue
+     PART 4 : DETAIL       DetailView.vue
+     PART 5 : FORM         ContactForm.vue (from 6.3D)
+     PART 6 : VUE ADDITIONS  9.3D: validation messages, 2-second reset, the
+                             acknowledgement card and the sign-up layout
+
+   Two breakpoints are used all the way through:
+     48rem (768px)  phone  -> tablet
+     64rem (1024px) tablet -> desktop
+   Anything below 48rem is the mobile default, so the file is written
+   mobile-first and every media query only ever adds columns.
+*/
+
+
+/*
+   PART 1 : SHARED
+*/
+
+/* these are the theme variables for the site */
+/* i used them to create a consistent design system */
+:root {
+  --primary:   #2D1B69;  /* deep purple for headers, footer, headings */
+  --secondary: #7C3AED;  /* vivid purple for CTAs, links, accents     */
+  --surface:   #F8F7FF;  /* off-white for page and card backgrounds   */
+
+  --ink:      #1B1533;
+  --ink-soft: #4A4363;
+  --line:     #DDD8EE;
+  --white:    #FFFFFF;
+
+  --good:    #157F4B;
+  --good-bg: #E4F5EC;
+  --warn:    #8A5A00;
+  --warn-bg: #FCF0DA;
+  --miss:    #A32C4C;
+  --miss-bg: #FBE7EC;
+
+  --radius:      0.75rem;
+  --radius-sm:   0.5rem;
+  --radius-pill: 2rem;
+  --shadow:      0 0.125rem 0.75rem rgba(45, 27, 105, 0.08);
+
+  /* 5.2C: the vertical rhythm is a variable now instead of a number i
+     retyped in every section. it scales with the viewport. */
+  --gap:      1.25rem;
+  --gap-lg:   2rem;
+  /* using clamp() for responsive spacing */
+  --section-y: clamp(3rem, 2rem + 4.07vw, 4.5rem);
+
+  --font-head: "Space Grotesk", "Trebuchet MS", sans-serif;
+  --font-body: "Exo", "Segoe UI", Arial, sans-serif;
+}
+
+
+/* base configuration */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.65;
+  -webkit-text-size-adjust: 100%;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-head);
+  color: var(--primary);
+  line-height: 1.2;
+  margin: 0 0 0.75rem;
+}
+
+/* the clamp() function is used to create a responsive font size that scales
+   between a minimum and maximum value based on the viewport width. */
+h1 { 
+  font-size: clamp(1.9rem, 1.3rem + 2.5vw, 2.5rem); 
+}
+h2 { 
+  font-size: clamp(1.5rem, 1.12rem + 1.63vw, 1.9rem); 
+}
+h3 { 
+  font-size: 1.15rem; 
+}
+
+p {
+   margin: 0 0 1rem; 
+}
+
+a {
+   color: var(--secondary); 
+}
+
+img, svg {
+   max-width: 100%; 
+}
+
+ul, ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+
+
+
+/* this is the main layout container */
+.wrap {
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding-inline: 5%;
+}
+
+/* section uses clamp() so the padding scales with the viewport width */
+.section {
+  padding: var(--section-y) 0;
+}
+
+/* 5.2C: every section now opens with the same block : eyebrow, h2, lead. */
+.section-head {
+  max-width: 46rem;
+  margin-bottom: var(--gap-lg);
+}
+.section-head h2 { margin-bottom: 0.5rem; }
+.section-head .section-lead { margin-bottom: 0; }
+
+/* these are the label styles */
+.eyebrow, .mock-label, .step-num, .field label {
+  font-family: var(--font-head);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+
+.eyebrow {
+  color: var(--secondary);
+  margin-bottom: 0.5rem;
+}
+.mock-label {
+  color: var(--ink-soft);
+  margin: 0.75rem 0 0.35rem;
+}
+
+.lead {
+  font-size: 1.05rem;
+  color: var(--ink-soft);
+}
+
+.section-lead {
+  color: var(--ink-soft);
+  max-width: 42rem;
+}
+
+
+/* these are the panel surface styles */
+.step, .feature, .card, .summary-block, .filters {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.4rem;
+  box-shadow: var(--shadow);
+}
+
+/* buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0.8rem 1.4rem;
+  border: 2px solid transparent;
+  border-radius: var(--radius);
+  font-family: var(--font-head);
+  font-size: 1rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* the primary button styles */
+.btn-primary {
+  background: var(--secondary);
+  color: var(--white);
+}
+/* primary button changes to the primary colour when hovered */
+.btn-primary:hover { background: var(--primary); }
+
+/* this is the second button, which has a ghost bg */
+.btn-ghost {
+  background: transparent;
+  color: var(--primary);
+  border-color: var(--line);
+}
+.btn-ghost:hover {
+  border-color: var(--secondary);
+  color: var(--secondary);
+}
+
+/* accent button styles, located at the bottom of the page */
+.btn-accent {
+  background: var(--surface);
+  color: var(--primary);
+}
+.btn-accent:hover { background: var(--white); }
+
+/* .btn-small is only used on the dashboard, but it belongs with the button
+   family rather than in PART 3 on its own. */
+.btn-small {
+  padding: 0.55rem 1rem;
+  font-size: 0.9rem;
+}
+
+
+/* header and navigation */
+.site-header {
+  background: var(--primary);
+  color: var(--white);
+  padding: 0.9rem 0;
+}
+
+/* flex row: logo on the left, burger on the right, nav on its own line under
+   them. at 48rem the nav joins the row. */
+.header-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 3.5rem;
+}
+
+/* logo */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: var(--white);
+}
+
+.logo-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-sm);
+  background: var(--secondary);
+  color: var(--white);
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+
+.logo-text {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+/* 9.3D nav: in 6.3D a hidden checkbox held the open/closed state. in Vue the
+   state is a ref (menuOpen) in AppHeader.vue, which adds .is-open to the nav, and
+   the Menu control is now a real <button> with aria-expanded. */
+.nav-burger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-head);
+  font-size: 0.9rem;
+  color: var(--white);
+  cursor: pointer;
+  /* comfortable tap target on a phone */
+  min-height: 2.75rem;
+  /* reset the default button look */
+  background: transparent;
+  font-weight: 500;
+}
+
+/* the three bars, drawn with one element + two pseudo elements */
+.burger-bars,
+.burger-bars::before,
+.burger-bars::after {
+  display: block;
+  width: 1.1rem;
+  height: 0.125rem;
+  background: currentColor;
+  border-radius: 1px;
+}
+.burger-bars {
+  position: relative;
+}
+.burger-bars::before,
+.burger-bars::after {
+  content: "";
+  position: absolute;
+  left: 0;
+}
+.burger-bars::before { top: -0.35rem; }
+.burger-bars::after  { top:  0.35rem; }
+
+/* open state: middle bar hides, the other two rotate into an X */
+.burger-bars.is-open { background: transparent; }
+.burger-bars.is-open::before { top: 0; transform: rotate(45deg); }
+.burger-bars.is-open::after  { top: 0; transform: rotate(-45deg); }
+
+/* the nav itself: closed by default on a phone */
+.site-nav {
+  flex: 1 1 100%;
+  display: none;
+}
+
+/* menu open -> the nav appears under the logo row */
+.site-nav.is-open {
+  display: block;
+}
+
+.site-nav ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  margin-top: 0.25rem;
+}
+
+.site-nav a {
+  display: block;
+  padding: 0.6rem 0;
+  color: var(--white);
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+/* when hovered the text colour changes */
+.site-nav a:hover {
+  color: #D6C9FF;
+  text-decoration: underline;
+}
+
+/* current page indicator */
+.site-nav .is-current {
+  border-bottom: 0.15rem solid var(--secondary);
+  font-weight: 600;
+}
+
+/* log in / log out cta */
+.site-nav .nav-cta {
+  margin-top: 0.5rem;
+  padding: 0.4rem 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: var(--radius-pill);
+  text-align: center;
+}
+
+/* BREAKPOINT 1 (48rem) : the burger disappears and the nav becomes a row
+   sitting beside the logo. */
+@media (min-width: 48rem) {
+  .nav-burger { display: none; }
+
+  .site-nav {
+    flex: 0 1 auto;
+    display: block;
+  }
+  .site-nav ul {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.5rem;
+    padding-top: 0;
+    margin-top: 0;
+    border-top: 0;
+  }
+  .site-nav a { padding: 0.25rem 0; }
+  .site-nav .nav-cta {
+    margin-top: 0;
+    padding: 0.25rem 0.85rem;
+  }
+}
+
+
+/*  badges and skill chips  */
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.65rem;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-head);
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* every match has a colour : high, medium and low */
+.badge-high { 
+  background: var(--good-bg); color: var(--good); 
+}
+.badge-mid  { 
+  background: var(--warn-bg); color: var(--warn); 
+}
+.badge-low  { 
+  background: var(--miss-bg); color: var(--miss); 
+}
+
+/* this is the paragraph holding the skill chips */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0;
+}
+
+/* singular chip */
+.chip {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.82rem;
+}
+
+.chip-have { 
+  background: var(--good-bg); color: var(--good); 
+}
+.chip-miss { 
+  background: var(--miss-bg); color: var(--miss); 
+}
+
+
+/*  responsive tables (5.2C) 
+   Two techniques are used on this site, one per page:
+
+     index.html    .table-scroll  -> the wrapper scrolls sideways
+     dashboard.html .table-stack  -> each row becomes a labelled block
+
+   The base table styling below is shared by both. */
+
+.table-heading {
+  margin: var(--gap-lg) 0 0.75rem;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  /* border-radius on a table only shows if the corners are clipped */
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  font-size: 0.95rem;
+}
+
+.data-table caption {
+  caption-side: bottom;
+  padding: 0.75rem 0.25rem 0;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  text-align: left;
+}
+
+.data-table th,
+.data-table td {
+  padding: 0.75rem 0.9rem;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+
+.data-table thead th {
+  background: var(--primary);
+  color: var(--white);
+  font-family: var(--font-head);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.data-table tbody th[scope="row"] {
+  font-family: var(--font-head);
+  color: var(--primary);
+  font-weight: 700;
+}
+
+/* zebra striping so a long row is easy to follow across the width */
+.data-table tbody tr:nth-child(even) {
+  background: var(--surface);
+}
+
+.data-table tbody tr:last-child th,
+.data-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.table-note {
+  margin-top: 0.85rem;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+
+/* technique A: horizontal scrolling (overflow-x: auto) */
+.table-scroll {
+  overflow-x: auto;
+  /* momentum scrolling on ios */
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius);
+}
+/* the min-width is the point of the whole thing: the table refuses to squash
+   below a readable width and the wrapper scrolls instead of the page. */
+.table-scroll .data-table {
+  min-width: 42rem;
+}
+
+/* technique B: column stacking */
+/* below 48rem the comparison table stops being a grid entirely. each row
+   becomes its own card and the column headings are re-printed in front of
+   each cell from the data-label attribute. */
+@media (max-width: 47.99rem) {
+  .table-stack {
+    border: 0;
+    box-shadow: none;
+    background: transparent;
+    overflow: visible;
+  }
+
+  /* the real thead is hidden from sight but stays in the accessibility tree
+     for screen readers */
+  .table-stack thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .table-stack tbody,
+  .table-stack tr,
+  .table-stack th,
+  .table-stack td {
+    display: block;
+  }
+
+  .table-stack tbody tr {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1rem 1.1rem;
+    margin-bottom: var(--gap);
+  }
+  .table-stack tbody tr:nth-child(even) {
+    background: var(--white);
+  }
+  .table-stack tbody tr:last-child { margin-bottom: 0; }
+
+  /* the row header is the block title, so it gets no data-label prefix */
+  .table-stack tbody th[scope="row"] {
+    font-size: 1.05rem;
+    padding: 0 0 0.6rem;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 0.6rem;
+  }
+
+  .table-stack tbody td {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.3rem 0;
+    border-bottom: 0;
+  }
+
+  /* this is the column heading, reprinted per cell */
+  .table-stack tbody td::before {
+    content: attr(data-label);
+    font-family: var(--font-head);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    flex: 0 0 auto;
+  }
+
+  .table-stack caption {
+    padding-bottom: 0.75rem;
+    caption-side: top;
+  }
+}
+
+
+/* call-to-action band */
+.cta-band {
+  margin-top: 2.5rem;
+  background: var(--primary);
+  color: var(--white);
+  border-radius: var(--radius);
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+
+.cta-band h2 { color: var(--white); }
+.cta-band p  { color: rgba(255, 255, 255, 0.85); }
+
+/* full-width button on a phone, shrink-to-fit from tablet up */
+.cta-band .btn { display: flex; }
+
+@media (min-width: 48rem) {
+  .cta-band { padding: 3rem 2rem; }
+  .cta-band .btn { display: inline-flex; }
+}
+
+
+/* footer */
+.site-footer {
+  background: var(--primary);
+  color: rgba(255, 255, 255, 0.85);
+  padding: 2.25rem 0;
+}
+
+/* everything from here is footer content */
+.footer-inner {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.footer-brand p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.footer-nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+}
+.footer-nav a {
+  color: var(--white);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+.footer-nav a:hover { text-decoration: underline; }
+
+.copyright {
+  margin: 0;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  padding-top: 1rem;
+}
+
+/* the stacked footer column becomes a two-column arrangement at 48rem */
+@media (min-width: 48rem) {
+  .footer-inner {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 1rem 2rem;
+  }
+  /* grid column start -> 1 and grid column end -> -1 */
+  .copyright { grid-column: 1 / -1; }
+}
+
+
+/*
+   PART 2 : HOME PAGE (index.html)
+*/
+
+/* this is the hero section for the index html.
+   5.2C: a gradient is painted underneath the photo so the hero still has
+   enough contrast if banner.png is missing or slow to load. */
+.hero {
+  background-image:
+    linear-gradient(120deg, rgba(45, 27, 105, 0.92), rgba(45, 27, 105, 0.55)),
+    url("banner.png");
+  background-color: var(--primary);
+  background-size: cover;
+  background-position: center;
+  color: var(--white);
+  padding: 2.5rem 0 3rem;
+  /* overflow-x is hidden so the decorative back card doesn't create a
+     horizontal scrollbar */
+  overflow-x: hidden;
+}
+
+/* hero subsections */
+.hero h1 {
+  color: var(--white);
+  font-size: clamp(2rem, 1.1rem + 3.13vw, 3.1rem);
+}
+.hero .lead    { color: rgba(255, 255, 255, 0.9); max-width: 34rem; }
+.hero .eyebrow { color: #D6C9FF; }
+
+/* grid stacks the buttons full-width on phones with no width overrides;
+   flex-wrap lets them sit inline at their own width from tablet up. */
+.hero-actions {
+  display: grid;
+  gap: 0.75rem;
+  margin: 1.5rem 0 0.75rem;
+}
+
+/* this is the ghost button on the hero */
+.hero .btn-ghost {
+  color: var(--white);
+  border-color: rgba(255, 255, 255, 0.55);
+}
+.hero .btn-ghost:hover {
+  color: var(--primary);
+  background: var(--white);
+  border-color: var(--white);
+}
+
+/* BREAKPOINT 1 (48rem) */
+@media (min-width: 48rem) {
+  .hero { padding: 4rem 0; }
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
+/* BREAKPOINT 2 (64rem) : hero splits into copy + card deck only when there
+   is room for both */
+@media (min-width: 64rem) {
+  .hero-inner {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    align-items: center;
+    gap: 3rem;
+  }
+}
+
+
+/* decorative match-card mock-up */
+.hero-panel {
+  display: none;
+  /* positioning context + perspective so the stacked cards read as a 3D deck */
+  position: relative;
+  perspective: 900px;
+  margin-top: 2rem;
+}
+
+/* for the mock card */
+.mock-card {
+  background: var(--white);
+  color: var(--ink);
+  border-radius: var(--radius);
+  padding: 1.1rem;
+  box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.22);
+  position: relative;
+}
+
+/* the front card (Junior Data Analyst) tilts forward and sits above the deck */
+.mock-card:not(.mock-card-back) {
+  z-index: 2;
+  transform: rotateY(-7deg) rotateX(3deg);
+  box-shadow: 0 1.25rem 2.75rem rgba(0, 0, 0, 0.32);
+}
+
+/* this is the style for the back card, which sits behind the front card */
+.mock-card-back {
+  z-index: 1;
+  position: absolute;
+  width: 102%;
+  height: 70%;
+  margin-top: -6.75rem;
+  padding: 1.35rem 1.35rem 1.5rem;
+  opacity: 0.75;
+  transform-origin: top left;
+  /* resting position, gives the 3d deck look */
+  transform: rotateY(-7deg) rotateX(3deg) scale(1.01) translate(2%, 0) translateZ(-50px);
+}
+
+.mock-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.mock-role {
+  font-family: var(--font-head);
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.mock-meta {
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  margin: 0.35rem 0 0.75rem;
+}
+
+@media (min-width: 48rem) {
+  .hero-panel { display: block; }
+}
+
+@media (min-width: 64rem) {
+  .hero-panel { margin-top: 0; }
+
+  .mock-card-back {
+    width: 106%;
+    transform: rotateY(-9deg) rotateX(3deg) scale(1.03) translate(6%, 0) translateZ(-60px);
+  }
+}
+
+
+/* "how it works" section */
+.how { background: var(--white); }
+
+/* the three steps stack in one column on phones */
+.steps {
+  display: grid;
+  gap: var(--gap);
+}
+
+/* from tablet up there is room for all three side by side */
+@media (min-width: 48rem) {
+  .steps {
+    /* this divides the columns into 3 equal parts */
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.step {
+  background: var(--surface);
+  padding: 1.5rem;
+}
+
+.step-icon {
+  width: 3rem;
+  height: 3rem;
+  color: var(--secondary);
+  margin-bottom: 0.75rem;
+}
+.step-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.step-num {
+  display: block;
+  color: var(--secondary);
+}
+
+.step p {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+
+/* about section */
+.about-inner {
+  display: grid;
+  gap: var(--gap-lg);
+}
+
+.about-copy p { color: var(--ink-soft); }
+
+/* stats displayed beside the about copy on desktop */
+.stats {
+  display: grid;
+  gap: 1rem;
+}
+
+.stats li {
+  background: var(--white);
+  border-left: 0.25rem solid var(--secondary);
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.25rem;
+  box-shadow: var(--shadow);
+}
+
+.stats strong {
+  display: block;
+  font-family: var(--font-head);
+  font-size: 1.75rem;
+  color: var(--primary);
+  line-height: 1.1;
+}
+
+.stats span {
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+
+/* the stats change role: a 3-across strip under the copy on tablet, then a
+   vertical sidebar beside it on desktop */
+@media (min-width: 48rem) {
+  .stats { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (min-width: 64rem) {
+  .about-inner {
+    grid-template-columns: 1.4fr 1fr;
+    align-items: center;
+  }
+  .stats { 
+    grid-template-columns: 1fr; 
+  }
+}
+
+
+/* skills in demand (table section) */
+.demand { 
+  background: var(--white); 
+}
+
+
+/* features section */
+.features { 
+  background: var(--surface); 
+}
+
+.feature-grid {
+  display: grid;
+  gap: var(--gap);
+}
+
+.feature h3 { 
+  margin-bottom: 0.4rem; 
+}
+.feature p {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+/* one column -> two -> four across the two breakpoints */
+@media (min-width: 48rem) {
+  .feature-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 64rem) {
+  .feature-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+
+/* 
+   PART 3 : DASHBOARD (dashboard.html)
+*/
+
+/* page head and skill summary */
+.page-head {
+  background: var(--white);
+  border-bottom: 1px solid var(--line);
+  padding: 2.25rem 0;
+}
+
+/* the two summary blocks stack on phones */
+.summary {
+  display: grid;
+  gap: var(--gap);
+  margin-top: 1.5rem;
+}
+
+/* side by side from tablet up */
+@media (min-width: 48rem) {
+  .summary { grid-template-columns: repeat(2, 1fr); }
+}
+
+.summary-block {
+  background: var(--surface);
+  padding: 1.1rem;
+}
+
+.summary-hint {
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  margin: 0.75rem 0 0;
+}
+
+
+/* filter bar */
+.filters {
+  display: grid;
+  gap: 0.85rem;
+  background: var(--white);
+  padding: 1.1rem;
+}
+
+/* styles for the dropdowns */
+.field label {
+  display: block;
+  color: var(--ink-soft);
+  margin-bottom: 0.25rem;
+}
+
+.field select {
+  width: 100%;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--ink);
+}
+
+/* the three dropdowns sit side by side from tablet up. 9.3D: the filters are
+   live in Vue, so the old "Apply filters" button and its grid slot are gone */
+@media (min-width: 48rem) {
+  .filters {
+    grid-template-columns: repeat(3, 1fr);
+    align-items: end;
+    padding: 1.4rem;
+  }
+}
+
+
+/* results and internship cards */
+.result-count {
+  margin: 1.5rem 0 1rem;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+
+/* one internship card per row on phones */
+.card-list {
+  display: grid;
+  gap: var(--gap);
+}
+
+/* two across on tablet, three on desktop */
+@media (min-width: 48rem) {
+  .card-list { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 64rem) {
+  .card-list { grid-template-columns: repeat(3, 1fr); }
+}
+
+.card {
+  background: var(--white);
+  /* 5.2C vs 5.1P: the card is now a flex column so the button can be pinned to the bottom
+     flex + margin-top:auto on the button pins every "View details" to the
+     bottom edge so the row lines up. */
+  display: flex;
+  flex-direction: column;
+}
+
+.card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.card-head h3 {
+  font-size: 1.15rem;
+  margin: 0;
+}
+
+.card-meta {
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  margin: 0.35rem 0 0.75rem;
+}
+
+.card-body {
+  color: var(--ink-soft);
+  margin-bottom: 0.25rem;
+}
+
+/* margin-top:auto cannot also guarantee a minimum gap, so the last chip row
+   carries the spacing instead */
+.card .chips:last-of-type {
+  margin-bottom: 1.1rem;
+}
+
+.card .btn {
+  display: flex;
+  margin-top: auto;
+}
+
+@media (min-width: 48rem) {
+  .card .btn {
+    display: inline-flex;
+    align-self: flex-start;
+  }
+}
+
+
+/*
+   PART 4 : INTERNSHIP DETAIL PAGE (detail.html)
+   5.3D addition
+*/
+
+/* back link sits above the eyebrow so the user's eye lands on "go back"
+   before the role title, matching how the 1.1P wireframe placed it right
+   under the nav */
+.back-link {
+  display: inline-block;
+  margin-bottom: 0.75rem;
+  font-family: var(--font-head);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.back-link:hover { text-decoration: underline; }
+
+
+.description-section,
+.actions-section {
+  padding-top: 0;
+}
+
+/* match score + skills stack on a phone, then sit
+   side by side once there is enough width for both */
+.match-grid {
+  display: grid;
+  gap: var(--gap-lg);
+}
+
+/* media query for tablet and desktop */
+@media (min-width: 48rem) {
+  .match-grid {
+    grid-template-columns: 0.8fr 1.2fr;
+    /* letting both panels stretch (the grid default) instead of
+       align-items:start, so the score panel matches the skills panel's
+       height rather than sitting short next to it */
+  }
+}
+
+/* this is the match score panel which contains the visual match score gauge
+designed as a conic gradient ring to show the percentage match */
+.match-score-panel {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* the ring is drawn with conic-gradient instead of an svg or image */
+/* --pct is used here to control the percentage fill */
+.score-ring {
+  --pct: 0;
+  /* clamp() keeps it in step with the fluid sizing already used for
+     h1/h2 and --section-y, instead of a fixed size at every width */
+  width: clamp(7rem, 5rem + 6vw, 9.5rem);
+  height: clamp(7rem, 5rem + 6vw, 9.5rem);
+  margin: 0 auto 0.75rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(closest-side, var(--white) 79%, transparent 80% 100%),
+    conic-gradient(var(--secondary) calc(var(--pct) * 1%), var(--line) 0);
+}
+
+.score-num {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 1.6rem;
+  color: var(--primary);
+}
+
+.skills-panel {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+}
+
+
+.job-description h3 {
+  margin-top: 1.5rem;
+}
+
+.plain-list {
+  list-style: disc;
+  padding-left: 1.25rem;
+  color: var(--ink-soft);
+}
+.plain-list li {
+  margin-bottom: 0.4rem;
+}
+
+.actions-row {
+  display: grid;
+  gap: 0.75rem;
+}
+
+/* this media query controls how the "apply on seek" CTA buttons are displayed in tablet width and above */
+@media (min-width: 48rem) {
+  .actions-row {
+    display: flex;
+    gap: 1rem;
+  }
+}
+
+
+/*
+   PART 5 : PROFILE & SKILLS SETUP FORM (signup.html)
+   6.3D addition
+*/
+
+/* the form is kept narrower than the 72rem page wrap. very wide inputs are
+   hard to scan, and 52rem fits two comfortable columns on desktop */
+.profile-form {
+  max-width: 52rem;
+  margin-inline: auto;
+  display: grid;
+  gap: var(--gap-lg);
+}
+
+.form-note {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+
+/* required marker, in the "missing skill" colour so it reads as important */
+.req {
+  color: var(--miss);
+  font-weight: 700;
+}
+
+/* each of the three groups is a card, matching .card and .summary-block so
+   the form looks like the rest of the site rather than a standalone page */
+.form-group {
+  margin: 0;
+  min-width: 0;          /* stops long content widening the fieldset on phones */
+  padding: 1.25rem;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+/* the legend is styled like an h2-level heading so each group is easy to find
+   when scrolling a long form on a phone */
+.form-group > legend {
+  float: left;           /* pulls the legend inside the card instead of sitting on the border */
+  width: 100%;
+  padding: 0;
+  margin-bottom: 0.35rem;
+  font-family: var(--font-head);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+.form-group > legend + * { clear: both; }
+
+.group-hint {
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  margin-bottom: 1.25rem;
+}
+
+/* Single column on mobile - one field per row improves readability on small
+   screens and gives every input the full width for tapping */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.1rem;
+}
+
+/* each field is a small flex column: label, input, hint */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.form-field > label,
+.choice-group > legend {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--primary);
+}
+
+/* nested fieldsets (skills checkboxes, availability radios) lose the browser
+   border so they look like a normal field */
+.choice-group {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.choice-group > legend {
+  padding: 0;
+  margin-bottom: 0.35rem;
+}
+
+.hint {
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  line-height: 1.45;
+}
+
+/* shared input look, taken from the dashboard filter dropdowns */
+.form-field input:not([type="checkbox"]):not([type="radio"]),
+.form-field select,
+.form-field textarea {
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-family: var(--font-body);
+  /* 1rem stops iOS Safari zooming in when an input is focused */
+  font-size: 1rem;
+  color: var(--ink);
+  /* 2.75rem minimum is a comfortable touch target on a phone */
+  min-height: 2.75rem;
+}
+
+.form-field textarea {
+  resize: vertical;
+  min-height: 7rem;
+}
+
+.form-field select[multiple] {
+  padding: 0.35rem;
+}
+.form-field select[multiple] option {
+  padding: 0.35rem 0.5rem;
+  border-radius: 0.35rem;
+}
+
+.form-field input[type="file"] {
+  background: var(--white);
+  border-style: dashed;
+  border-width: 2px;
+  cursor: pointer;
+}
+
+/* clear focus ring in the brand purple for keyboard users */
+.form-field input:focus-visible,
+.form-field select:focus-visible,
+.form-field textarea:focus-visible,
+.choice input:focus-visible {
+  outline: 3px solid rgba(124, 58, 237, 0.35);
+  outline-offset: 1px;
+  border-color: var(--secondary);
+}
+
+/* 9.3D: the 6.3D :user-invalid / :user-valid rules were removed. ContactForm.vue
+   validates in Vue and adds .has-error instead (see PART 6) */
+
+/* checkboxes and radios are pill-shaped chips that wrap with flexbox, so a
+   row of skills fits any width and each one is big enough to tap */
+.choice-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.choice-list-stack {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.choice {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.85rem;
+  min-height: 2.75rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.choice input {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin: 0;
+  accent-color: var(--secondary);
+  flex-shrink: 0;
+}
+
+/* a selected chip picks up the brand colour so the user can see their picks */
+.choice:has(input:checked) {
+  border-color: var(--secondary);
+  background: #EFE8FF;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* the consent line is a wide single choice, so it keeps a normal rounded box */
+.consent {
+  align-items: flex-start;
+  border-radius: var(--radius);
+  background: var(--white);
+  line-height: 1.5;
+}
+.consent input { margin-top: 0.2rem; }
+
+/* buttons stack on mobile with Create Profile first */
+.form-actions {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 0.75rem;
+}
+.form-actions .btn { width: 100%; }
+
+/* BREAKPOINT 1 (48rem) : Two-column layout on tablet and desktop, form
+   fields grouped side by side (name + email, visa + role) */
+@media (min-width: 48rem) {
+  .form-group { padding: 1.75rem 2rem; }
+
+  .form-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem 1.5rem;
+  }
+
+  /* resume upload, the skills chips and the textarea need the full width */
+  .span-2 { grid-column: 1 / -1; }
+
+  /* Reset and Create Profile sit side by side on the right, as in the wireframe */
+  .form-actions {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+  .form-actions .btn { width: auto; min-width: 10rem; }
+}
+
+
+/*
+   PART 6 : VUE ADDITIONS (9.3D)
+*/
+
+/* --- accessibility helpers ------------------------------------------------ */
+/* skip link: hidden until a keyboard user tabs to it */
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -3rem;
+  z-index: 10;
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  color: var(--primary);
+  font-weight: 700;
+}
+.skip-link:focus { top: 1rem; }
+
+/* text for screen readers only, e.g. "View details for <role>" */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+main:focus { outline: none; }
+
+/* home sections are reached from the header links; this keeps each heading
+   from sitting flush against the top of the screen when scrolled to */
+.home-view section[id] { scroll-margin-top: 1rem; }
+
+
+/* --- footer contact details ---------------------------------------------- */
+.footer-contact {
+  font-style: normal;
+  font-size: 0.9rem;
+}
+.footer-contact p { margin: 0 0 0.25rem; }
+.footer-contact a { color: var(--white); }
+
+@media (min-width: 48rem) {
+  .footer-contact { grid-column: 1 / -1; }
+}
+
+
+/* --- dashboard ----------------------------------------------------------- */
+/* the card body is wrapped in an <article>; it grows so every "View details"
+   button still lines up along the bottom of its row */
+.card-article {
+  flex: 1 1 auto;
+}
+
+.empty-state {
+  display: grid;
+  justify-items: start;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  background: var(--white);
+}
+.empty-state p { margin: 0; color: var(--ink-soft); }
+
+
+/* --- detail page --------------------------------------------------------- */
+/* responsibilities and requirements: stacked on a phone, two columns from tablet */
+.description-columns {
+  display: grid;
+  gap: 0 var(--gap-lg);
+}
+@media (min-width: 48rem) {
+  .description-columns { grid-template-columns: repeat(2, 1fr); }
+}
+
+.btn-ghost.is-saved {
+  border-color: var(--good);
+  background: var(--good-bg);
+  color: var(--good);
+}
+
+
+/* --- sign-up layout -------------------------------------------------------
+   phone and tablet: the form, then the acknowledgement card underneath it.
+   desktop: the form on the left and the card in a sticky column on the right,
+   so it stays in view while the form scrolls and after the form resets */
+.signup-layout {
+  display: grid;
+  gap: var(--gap-lg);
+}
+
+/* the form fills its column inside the layout instead of centring itself */
+.signup-layout .profile-form {
+  max-width: none;
+  margin: 0;
+}
+
+@media (min-width: 64rem) {
+  .signup-layout {
+    grid-template-columns: minmax(0, 1.75fr) minmax(16rem, 1fr);
+    align-items: start;
+  }
+  .ack-area {
+    position: sticky;
+    top: 1.5rem;
+  }
+}
+
+
+/* --- form header, errors and success ------------------------------------- */
+.form-header h2 { margin-bottom: 0.35rem; }
+.form-header .section-lead { margin-bottom: 0.5rem; }
+
+/* inline error under a field (rendered with v-if). red text plus a cross icon,
+   so the state is not shown by colour alone */
+.field-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  margin: 0;
+  color: var(--miss);
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.field-error::before {
+  content: "\2715";
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.1rem;
+  height: 1.1rem;
+  margin-top: 0.05rem;
+  border-radius: 50%;
+  background: var(--miss);
+  color: var(--white);
+  font-size: 0.7rem;
+}
+
+.form-field.has-error input:not([type="checkbox"]):not([type="radio"]),
+.form-field.has-error select,
+.form-field.has-error textarea {
+  border-color: var(--miss);
+  background: var(--miss-bg);
+}
+.choice-group.has-error .choice { border-color: var(--miss); }
+.consent-field.has-error .consent {
+  border-color: var(--miss);
+  background: var(--miss-bg);
+}
+
+/* character counter under the textarea */
+.char-counter {
+  margin: 0;
+  align-self: flex-end;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+.char-counter.is-over { color: var(--miss); font-weight: 700; }
+
+/* success message shown for the 2 seconds before the form resets */
+.form-success {
+  padding: 0.9rem 1.1rem;
+  border: 1px solid var(--good);
+  border-left-width: 0.3rem;
+  border-radius: var(--radius-sm);
+  background: var(--good-bg);
+  color: var(--good);
+  font-weight: 600;
+}
+.form-success p { margin: 0; }
+
+/* a bar that empties over exactly 2 seconds, so the user can see the reset coming */
+.reset-progress {
+  height: 0.3rem;
+  margin-top: 0.6rem;
+  border-radius: var(--radius-pill);
+  background: rgba(21, 127, 75, 0.2);
+  overflow: hidden;
+}
+.reset-progress span {
+  display: block;
+  height: 100%;
+  background: var(--good);
+  transform-origin: left;
+  animation: reset-countdown 2s linear forwards;
+}
+@keyframes reset-countdown {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
+}
+
+/* fields are locked during the 2-second wait */
+.form-group:disabled { opacity: 0.6; }
+.btn:disabled { cursor: not-allowed; opacity: 0.75; }
+
+
+/* --- customer acknowledgement card (App.vue) ----------------------------- */
+.ack-card,
+.ack-placeholder {
+  padding: 1.4rem;
+  border-radius: var(--radius);
+}
+
+.ack-card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-top: 0.35rem solid var(--good);
+  box-shadow: var(--shadow);
+}
+.ack-card:focus { outline: none; }
+
+.ack-card h3 {
+  font-size: 1.35rem;
+  overflow-wrap: anywhere;
+}
+
+/* the submitted details: one per line, label in bold */
+.ack-list {
+  display: grid;
+  gap: 0.45rem;
+  margin: 1rem 0;
+  padding: 1rem 0;
+  border-block: 1px solid var(--line);
+  font-size: 0.95rem;
+}
+.ack-list li { overflow-wrap: anywhere; }
+.ack-list strong { color: var(--primary); }
+
+.ack-time {
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+
+/* full-width button on a phone, like the other calls to action */
+.ack-card .btn { width: 100%; }
+
+.ack-placeholder {
+  border: 1px dashed var(--line);
+  background: var(--white);
+}
+.ack-placeholder h3 { font-size: 1.1rem; }
+.ack-placeholder p { margin: 0; color: var(--ink-soft); font-size: 0.95rem; }
